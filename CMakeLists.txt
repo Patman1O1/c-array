@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.28.0)
 project(array
         VERSION 0.1.0
         DESCRIPTION "An implementation of an array data structure written in C."
-        LANGUAGES C)
+        LANGUAGES C CXX)
 
 cmake_file_api(
         QUERY
