@@ -1,15 +1,20 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Information
+#-----------------------------------------------------------------------------------------------------------------------
 cmake_minimum_required(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION})
-project(${LIBRARY_TARGET}-main LANGUAGES C)
 
+#-----------------------------------------------------------------------------------------------------------------------
+# Dependencies
+#-----------------------------------------------------------------------------------------------------------------------
 if("${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-    find_package(${LIBRARY_TARGET} REQUIRED)
+    find_package(${PROJECT_NAME} REQUIRED)
 endif()
 
-add_executable(${LIBRARY_TARGET}-main)
-
-set(SOURCES main.c)
-target_sources(${LIBRARY_TARGET}-main PRIVATE ${SOURCES})
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCES})
-
-target_link_libraries(${LIBRARY_TARGET}-main PRIVATE ${LIBRARY_NAMESPACE}::${LIBRARY_TARGET})
+#-----------------------------------------------------------------------------------------------------------------------
+# Targets
+#-----------------------------------------------------------------------------------------------------------------------
+# Set the library's source files
+set(PROJECT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.c")
+target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES})
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${PROJECT_SOURCES})
 
