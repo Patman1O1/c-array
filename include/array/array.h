@@ -24,15 +24,18 @@ struct array {
     if (array.size > 0) {                                              \
         type values[] = {__VA_ARGS__};                                 \
         const size_t values_size = sizeof(values) / sizeof(values[0]); \
-        if (values_size > array.size) {                                \
+        if (values_size <= array.size) {                               \
+            for (size_t i = 0; i < values_size; i++) {                 \
+                type value = (type[]){__VA_ARGS__}[i];                 \
+                array.values[i] = &value;                              \
+            }                                                          \
+        } else {                                                       \
             free(array.values);                                        \
-            exit(EINVAL);                                              \
+            errno = E2BIG;                                             \
+            array.values = NULL;                                       \
         }                                                              \
-                                                                       \
-        for (size_t i = 0; i < values_size; i++) {                     \
-            type value = (type[]){__VA_ARGS__}[i];                     \
-            array.values[i] = &value;                                  \
-        }                                                              \
+    } else {                                                           \
+        array.values = NULL;                                           \
     }                                                                  \
 
 #define array_at(type, array, index) (*(type*)array.values[index])
