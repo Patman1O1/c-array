@@ -11,8 +11,7 @@
       "binaryDir": "${sourceDir}/build/${presetName}",
       "generator": "Ninja",
       "cacheVariables": {
-        "BUILD_TESTS": true,
-        "BUILD_MAIN": true
+        "BUILD_TESTS": true
       }
     }
   ]
