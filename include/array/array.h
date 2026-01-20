@@ -52,6 +52,8 @@ extern void array_swap(struct array* lhs_p, struct array* rhs_p);
 
 extern int array_cpy(const struct array* src_p, const struct array* dst_p);
 
+extern int array_mv(struct array** src_pp, struct array** dst_pp);
+
 extern int array_cmp(struct array lhs, struct array rhs);
 
 extern int array_free(struct array* array_p);
