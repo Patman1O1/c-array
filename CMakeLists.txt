@@ -123,3 +123,8 @@ install(FILES
 #-----------------------------------------------------------------------------------------------------------------------
 # Uninstallation
 #-----------------------------------------------------------------------------------------------------------------------
+if(NOT TARGET uninstall)
+    add_custom_target(uninstall
+            COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/cmake/cmake_uninstall.cmake
+            COMMENT "Uninstalling all installed files...")
+endif()
