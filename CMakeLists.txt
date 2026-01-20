@@ -1,7 +1,10 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Information
+#-----------------------------------------------------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.28.0)
 project(array
-        VERSION 1.0.0
-        DESCRIPTION ""
+        VERSION 0.1.0
+        DESCRIPTION "An implementation of an array data structure written in C."
         LANGUAGES C)
 
 cmake_file_api(
@@ -10,8 +13,33 @@ cmake_file_api(
         CODEMODEL 2.3
 )
 
+string(TOUPPER "${PROJECT_NAME}" PROJECT_NAME_UPPER)
+string(TOLOWER "${PROJECT_NAME}" PROJECT_NAME_LOWER)
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Includes
+#-----------------------------------------------------------------------------------------------------------------------
+include(CMakePackageConfigHelpers)
+include(GenerateExportHeader)
+include(GNUInstallDirs)
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Settings and Options
+#-----------------------------------------------------------------------------------------------------------------------
+# C Settings
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED ON)
+
+# Options
+option(BUILD_TESTS "Build the library tests" OFF)
+option(BUILD_SHARED_LIBS "Build the library as a shared library" OFF)
+
+# Set the library type as a variable
+set(LIBRARY_TYPE "STATIC")
+if(BUILD_SHARED_LIBS)
+    set(LIBRARY_TYPE "SHARED")
+endif()
+string(TOLOWER "${LIBRARY_TYPE}" LIBRARY_TYPE_LOWER)
 
 # Set default build type if not specified
 if(NOT DEFINED CMAKE_BUILD_TYPE AND NOT DEFINED CMAKE_CONFIGURATION_TYPES)
@@ -19,87 +47,84 @@ if(NOT DEFINED CMAKE_BUILD_TYPE AND NOT DEFINED CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-set(LIBRARY_TARGET ${PROJECT_NAME} CACHE STRING "Library target")
-set(LIBRARY_NAMESPACE "array" CACHE STRING "Library namespace")
+# Set namespace to the library name if not specified
+if(NOT DEFINED PROJECT_NAMESPACE)
+    set(PROJECT_NAMESPACE ${PROJECT_NAME})
+endif()
 
-add_library(${LIBRARY_TARGET} SHARED)
-add_library(${LIBRARY_NAMESPACE}::${LIBRARY_TARGET} ALIAS ${LIBRARY_TARGET})
+#-----------------------------------------------------------------------------------------------------------------------
+# Targets
+#-----------------------------------------------------------------------------------------------------------------------
+# Define the library as a target
+add_library(${PROJECT_NAME} ${LIBRARY_TYPE})
 
 # Set the library properties
-set_target_properties(${LIBRARY_TARGET} PROPERTIES
+set_target_properties(${PROJECT_NAME} PROPERTIES
         SOVERSION ${PROJECT_VERSION_MAJOR}
         VERSION ${PROJECT_VERSION}
 )
 
-# Include library directories
-target_include_directories(${LIBRARY_TARGET}
-        PUBLIC
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+# Set the library header files
+set(PROJECT_HEADERS "${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/${PROJECT_NAME}.h"
+                    "${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/export.h"
 )
 
-# Add source files
-set(LIBRARY_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/include/${LIBRARY_TARGET}/export.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/include/${LIBRARY_TARGET}/${LIBRARY_TARGET}.h"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/${LIBRARY_TARGET}.c")
+# Include library directories
+target_include_directories(${PROJECT_NAME}
+        PUBLIC
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+)
 
-target_sources(${LIBRARY_TARGET} PRIVATE ${LIBRARY_SOURCES})
+# Add the header files to the library target
+target_sources(${PROJECT_NAME} PUBLIC ${PROJECT_HEADERS})
 
-# Group sources for IDE
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${LIBRARY_SOURCES})
+# Set the ARRAY_STATIC_DEFINE C macro to true or false depending on the boolean value of BUILD_SHARED_LIBS
+target_compile_definitions(${PROJECT_NAME} PUBLIC "$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:${PROJECT_NAME_UPPER}_STATIC_DEFINE>")
 
-option(BUILD_TESTS "Build the library's test suits")
-option(BUILD_MAIN "Build an executable linked to the library")
-option(BUILD_DOCS "Generate library documentation")
+# Group sources for the IDE
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${PROJECT_HEADERS})
 
+# Add the source subdirectory
+add_subdirectory(src)
+
+# Add the test subdirectory if the user specified they wanted to build the tests
 if(BUILD_TESTS)
-    add_subdirectory(tests)
+    add_subdirectory(test)
 endif()
 
-if(BUILD_MAIN)
-    add_subdirectory(src)
-endif()
+#-----------------------------------------------------------------------------------------------------------------------
+# Installation
+#-----------------------------------------------------------------------------------------------------------------------
+configure_package_config_file("cmake/${PROJECT_NAME}-config.cmake.in" "${PROJECT_NAME}-config.cmake"
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 
-if(BUILD_DOCS)
-    build_docs()
-endif()
+write_basic_package_version_file("${PROJECT_NAME}-config-version.cmake" COMPATIBILITY SameMajorVersion)
 
-configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/${LIBRARY_TARGET}-config.cmake.in"
-        "${LIBRARY_TARGET}-config.cmake"
-        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${LIBRARY_TARGET}"
-        NO_CHECK_REQUIRED_COMPONENTS_MACRO)
-
-write_basic_package_version_file("${LIBRARY_TARGET}-config-version.cmake"
-        COMPATIBILITY SameMajorVersion)
-
-install(TARGETS ${LIBRARY_TARGET}
-        EXPORT ${LIBRARY_TARGET}-targets
-        RUNTIME COMPONENT ${LIBRARY_TARGET}
-        LIBRARY COMPONENT ${LIBRARY_TARGET} NAMELINK_COMPONENT ${LIBRARY_TARGET}-dev
-        ARCHIVE COMPONENT ${LIBRARY_TARGET}-dev
+install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}_export
+        RUNTIME COMPONENT ${PROJECT_NAME}
+        LIBRARY COMPONENT ${PROJECT_NAME} NAMELINK_COMPONENT ${PROJECT_NAME}-dev
+        ARCHIVE COMPONENT ${PROJECT_NAME}-dev
         INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
-
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+install(DIRECTORY "include/"
         TYPE INCLUDE
-        COMPONENT ${LIBRARY_TARGET}-dev)
+        COMPONENT ${PROJECT_NAME}-dev)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/include/${PROJECT_NAME}/export_${LIBRARY_TYPE_LOWER}.h"
+        COMPONENT ${PROJECT_NAME}-dev
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
 
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/include/${LIBRARY_TARGET}/export.h"
-        COMPONENT ${LIBRARY_TARGET}-dev
-        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/${LIBRARY_TARGET}")
-
-install(EXPORT ${LIBRARY_TARGET}-targets
-        COMPONENT ${LIBRARY_TARGET}-dev
-        FILE "${LIBRARY_TARGET}-export.cmake"
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${LIBRARY_TARGET}"
-        NAMESPACE ${LIBRARY_NAMESPACE}::)
+install(EXPORT ${PROJECT_NAME}_export
+        COMPONENT ${PROJECT_NAME}-dev
+        FILE "${PROJECT_NAME}-${LIBRARY_TYPE_LOWER}-targets.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+        NAMESPACE ${PROJECT_NAMESPACE}::)
 
 install(FILES
-        "${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_TARGET}-config.cmake"
-        "${CMAKE_CURRENT_BINARY_DIR}/${LIBRARY_TARGET}-config-version.cmake"
-        COMPONENT ${LIBRARY_TARGET}-dev
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${LIBRARY_TARGET}")
-
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+        COMPONENT ${PROJECT_NAME}-dev
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Uninstallation
