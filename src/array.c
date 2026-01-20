@@ -49,6 +49,37 @@ extern "C" {
         return EXIT_SUCCESS;
     }
 
+    int array_mv(struct array** src_pp, struct array** dst_pp) {
+        // Make sure the address of the source pointer and the address of the destination pointer do NOT point to NULL
+        if (src_pp == NULL || dst_pp == NULL) {
+            errno = EFAULT;
+            return errno;
+        }
+
+        // Free the array instance pointed to by the source pointer
+        if (*dst_pp != NULL) {
+            free(*dst_pp);
+
+            // Return the error number returned by free() if it is not equal to EXIT_SUCCESS (i.e. 0)
+            if (errno != EXIT_SUCCESS) {
+                return errno;
+            }
+        }
+
+        // Return the error number returned by free() if it is not equal to EXIT_SUCCESS (i.e. 0)
+        if (errno != EXIT_SUCCESS) {
+            return errno;
+        }
+
+        // Point the destination pointer to the array instance pointed to by the source pointer
+        *dst_pp = *src_pp;
+
+        // Point the source pointer to NULL
+        *src_pp = NULL;
+
+        return EXIT_SUCCESS;
+    }
+
     int array_cmp(const struct array lhs, const struct array rhs) {
         if (lhs.values == rhs.values) {
             return 0;
