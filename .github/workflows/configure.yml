@@ -1,0 +1,33 @@
+name: Configure
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  configure:
+    # Make sure this is not the template repository
+    #if: github.repository != 'Patman1O1/c-project-template'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure CMake files
+        run: |
+          cmake \
+          -D NAME="${{ github.event.repository.name }}" \
+          -D DESCRIPTION=${{ github.event.repository.description }}" \
+          -P cmake/configure.cmake
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "Configure template for ${GITHUB_REPOSITORY}" || echo "No changes to commit"
+          git push
