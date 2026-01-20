@@ -67,7 +67,7 @@ extern "C" {
         return 0;
     }
 
-    int32_t array_free(struct array* array_p) {
+    int array_free(struct array* array_p) {
         if (array_p == NULL) {
             errno = EFAULT;
             return EXIT_FAILURE;
