@@ -17,7 +17,7 @@ namespace array_testing {
         array_free(&array);
     }
 
-    TEST(array_init_suite, num_values_greater_array_size) {
+    TEST(array_init_suite, num_values_greater_than_array_size) {
         struct array array = {};
 
         array_init(int, array, 1, 1, 2, 3);
@@ -28,5 +28,7 @@ namespace array_testing {
 
         array_free(&array);
     }
+
+
 
 } // namespace array_testing
