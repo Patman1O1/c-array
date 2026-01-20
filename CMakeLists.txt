@@ -64,11 +64,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION ${PROJECT_VERSION}
 )
 
-# Set the library header files
-set(PROJECT_HEADERS "${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/${PROJECT_NAME}.h"
-                    "${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME}/export.h"
-)
-
 # Include library directories
 target_include_directories(${PROJECT_NAME}
         PUBLIC
@@ -77,8 +72,7 @@ target_include_directories(${PROJECT_NAME}
             "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
-# Add the header files to the library target
-target_sources(${PROJECT_NAME} PUBLIC ${PROJECT_HEADERS})
+generate_export_header(${PROJECT_NAME} EXPORT_FILE_NAME "include/${PROJECT_NAME}/export_${LIBRARY_TYPE_LOWER}.h")
 
 # Set the ARRAY_STATIC_DEFINE C macro to true or false depending on the boolean value of BUILD_SHARED_LIBS
 target_compile_definitions(${PROJECT_NAME} PUBLIC "$<$<NOT:$<BOOL:${BUILD_SHARED_LIBS}>>:${PROJECT_NAME_UPPER}_STATIC_DEFINE>")
