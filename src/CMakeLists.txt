@@ -14,7 +14,7 @@ endif()
 # Targets
 #-----------------------------------------------------------------------------------------------------------------------
 # Set the library's source files
-set(PROJECT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}.c")
+set(PROJECT_SOURCES "${PROJECT_NAME}.c")
 target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_SOURCES})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${PROJECT_SOURCES})
 
