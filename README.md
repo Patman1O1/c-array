@@ -1,2 +1,2 @@
-# c-project-template
-A template repository for a C project with CMake.
+# Array (C)
+An implementation of an array data structure written in C.
