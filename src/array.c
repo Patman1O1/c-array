@@ -69,8 +69,11 @@ extern "C" {
 
     int array_free(struct array* array_p) {
         if (array_p == NULL) {
-            errno = EFAULT;
-            return EXIT_FAILURE;
+            return EFAULT;
+        }
+
+        if (array_p->values == NULL) {
+            return EXIT_SUCCESS;
         }
 
         free(array_p);
