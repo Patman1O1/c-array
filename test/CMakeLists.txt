@@ -1,5 +1,22 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Information
+#-----------------------------------------------------------------------------------------------------------------------
 cmake_minimum_required(VERSION ${CMAKE_MINIMUM_REQUIRED_VERSION})
 
+#-----------------------------------------------------------------------------------------------------------------------
+# Includes
+#-----------------------------------------------------------------------------------------------------------------------
+include(FetchContent)
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Settings and Options
+#-----------------------------------------------------------------------------------------------------------------------
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Dependencies
+#-----------------------------------------------------------------------------------------------------------------------
 FetchContent_Declare(
         googletest
         GIT_REPOSITORY "https://github.com/google/googletest.git"
@@ -17,14 +34,17 @@ FetchContent_MakeAvailable(googletest)
 
 include(GoogleTest)
 
+#-----------------------------------------------------------------------------------------------------------------------
+# Targets
+#-----------------------------------------------------------------------------------------------------------------------
 list(APPEND SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}_tests.cpp")
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCES})
 
 add_executable(${PROJECT_NAME}_tests)
 target_sources(${PROJECT_NAME}_tests PRIVATE ${SOURCES})
-target_link_libraries(${LIBRARY_NAME}_tests
+target_link_libraries(${PROJECT_NAME}_tests
         PRIVATE
-            ${PROJECT_NAME}}
+            ${PROJECT_NAME}
             gtest_main
             gmock_main
 )
