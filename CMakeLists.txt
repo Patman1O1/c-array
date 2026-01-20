@@ -49,7 +49,7 @@ endif()
 
 # Set namespace to the library name if not specified
 if(NOT DEFINED PROJECT_NAMESPACE)
-    set(PROJECT_NAMESPACE ${PROJECT_NAME})
+    set(PROJECT_NAMESPACE ${PROJECT_NAME} CACHE STRING "PROJECT_NAMESPACE")
 endif()
 
 #-----------------------------------------------------------------------------------------------------------------------
