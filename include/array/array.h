@@ -14,22 +14,26 @@ struct array {
     size_t size;
 };
 
-#define array_init(type, array, array_size, ...)                                                                          \
-    array.size = array_size;                                                                                              \
-    array.values = (void**)calloc(array.size, sizeof(void*));                                                             \
-    if (array.values == NULL) {                                                                                           \
-        perror("calloc");                                                                                                 \
-        exit(EXIT_FAILURE);                                                                                               \
-    }                                                                                                                     \
-                                                                                                                          \
-    memcpy(array.values, (type[]){__VA_ARGS__}, array.size);                                                              \
-                                                                                                                          \
-    do {                                                                                                                  \
-        for (size_t i = 0; i < sizeof((type[]){__VA_ARGS__}) / sizeof((type[]){__VA_ARGS__}[0]) && i <= array.size; i++) {\
-            type temp = (type[]){__VA_ARGS__}[i];                                                                         \
-            array.values[i] = &temp;                                                                                      \
-        }                                                                                                                 \
-    } while (false);                                                                                                      \
+#define array_init(type, array, array_size, ...)                       \
+    array.size = array_size;                                           \
+    array.values = (void**)calloc(array.size, sizeof(void*));          \
+    if (array.values == NULL) {                                        \
+        exit(errno);                                                   \
+    }                                                                  \
+                                                                       \
+    if (array.size > 0) {                                              \
+        type values[] = {__VA_ARGS__};                                 \
+        const size_t values_size = sizeof(values) / sizeof(values[0]); \
+        if (values_size > array.size) {                                \
+            free(array.values);                                        \
+            exit(EINVAL);                                              \
+        }                                                              \
+                                                                       \
+        for (size_t i = 0; i < values_size; i++) {                     \
+            type value = (type[]){__VA_ARGS__}[i];                     \
+            array.values[i] = &value;                                  \
+        }                                                              \
+    }                                                                  \
 
 #define array_at(type, array, index) (*(type*)array.values[index])
 
