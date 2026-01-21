@@ -7,16 +7,16 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif // ifdef __cplusplus
+#endif // #ifdef __cplusplus
 
 struct array {
-    void** values;
+    void* values;
     size_t size;
 };
 
 #define array_init(type, array, array_size, ...)                       \
     array.size = array_size;                                           \
-    array.values = (void**)calloc(array.size, sizeof(void*));          \
+    array.values = (void*)calloc(array.size, sizeof(type));            \
     if (array.values == NULL) {                                        \
         exit(errno);                                                   \
     }                                                                  \
@@ -25,10 +25,7 @@ struct array {
         type values[] = {__VA_ARGS__};                                 \
         const size_t values_size = sizeof(values) / sizeof(values[0]); \
         if (values_size <= array.size) {                               \
-            for (size_t i = 0; i < values_size; i++) {                 \
-                type value = (type[]){__VA_ARGS__}[i];                 \
-                array.values[i] = &value;                              \
-            }                                                          \
+            memcpy(array.values, values, sizeof(type) * array.size);   \
         } else {                                                       \
             free(array.values);                                        \
             errno = E2BIG;                                             \
@@ -38,11 +35,11 @@ struct array {
         array.values = NULL;                                           \
     }                                                                  \
 
-#define array_at(type, array, index) (*(type*)array.values[index])
+#define array_at(type, array, index) (((type*)array.values)[index])
 
-#define array_front(type, array) (*(type*)array.values[0])
+#define array_front(type, array) (((type*)array.values)[0])
 
-#define array_back(type, array) (*(type*)array.values[array.size - 1])
+#define array_back(type, array) ((((type*)array.values)[array.size - 1])
 
 extern bool array_empty(struct array array);
 
@@ -54,12 +51,10 @@ extern int array_cpy(const struct array* src_p, const struct array* dst_p);
 
 extern int array_mv(struct array** src_pp, struct array** dst_pp);
 
-extern int array_cmp(struct array lhs, struct array rhs);
-
 extern int array_free(struct array* array_p);
 
 #ifdef __cplusplus
 }
-#endif // ifdef __cplusplus
+#endif // #ifdef __cplusplus
 
-#endif // ifndef ARRAY_H
+#endif // #ifndef ARRAY_H
