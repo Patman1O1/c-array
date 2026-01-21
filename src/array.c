@@ -6,7 +6,7 @@
 extern "C" {
 #endif // ifdef __cplusplus
 
-bool array_empty(const struct array array) { return array.size == 0; }
+bool array_empty(const struct array* array_p) { return array_p->size == 0; }
 
 void array_swap(struct array* lhs_p, struct array* rhs_p) {
     if (lhs_p == NULL || rhs_p == NULL || lhs_p == rhs_p) {
