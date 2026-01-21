@@ -39,7 +39,7 @@ struct array {
 
 #define array_front(type, array) (((type*)array.values)[0])
 
-#define array_back(type, array) ((((type*)array.values)[array.size - 1])
+#define array_back(type, array) (((type*)array.values)[array.size - 1])
 
 #define array_fill(type, array, value)           \
     if (array.values != NULL && array.size > 0) {\
