@@ -52,7 +52,7 @@ struct array {
         errno = EINVAL;                          \
     }                                            \
 
-extern bool array_empty(struct array array);
+extern bool array_empty(const struct array* array_p);
 
 extern void array_swap(struct array* lhs_p, struct array* rhs_p);
 
