@@ -111,4 +111,45 @@ namespace array_testing {
         EXPECT_EQ(array_free(&array), EXIT_SUCCESS);
     }
 
+    /* ----------------------------------------------------array_fill------------------------------------------------ */
+    TEST(array_fill_suite, empty_array) {
+        struct ::array array = {};
+
+        array_init(int, array, 0);
+
+        array_fill(int, array, 101);
+
+        EXPECT_EQ(errno, EFAULT);
+
+        EXPECT_EQ(::array_free(&array), EXIT_SUCCESS);
+    }
+
+    TEST(array_fill_suite, single_value_array) {
+        struct ::array array = {};
+
+        array_init(int, array, 1, 1);
+
+        EXPECT_EQ(array_at(int, array, 0), 1);
+
+        array_fill(int, array, 101);
+
+        EXPECT_EQ(array_at(int, array, 0), 101);
+
+        EXPECT_EQ(::array_free(&array), EXIT_SUCCESS);
+    }
+
+    TEST(array_fill_suite, multi_value_array) {
+        struct ::array array = {};
+
+        array_init(int, array, 10);
+
+        array_fill(int, array, 101);
+
+        for (std::size_t i = 0; i < array.size; i++) {
+            EXPECT_EQ(array_at(int, array, i), 101);
+        }
+
+        EXPECT_EQ(::array_free(&array), EXIT_SUCCESS);
+    }
+
 } // namespace array_testing
