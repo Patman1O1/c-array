@@ -41,9 +41,18 @@ struct array {
 
 #define array_back(type, array) ((((type*)array.values)[array.size - 1])
 
-extern bool array_empty(struct array array);
+#define array_fill(type, array, value)           \
+    if (array.values != NULL && array.size > 0) {\
+        for (size_t i = 0; i < array.size; i++) {\
+            array_at(type, array, i) = value;    \
+        }                                        \
+    } else if (array.values == NULL) {           \
+        errno = EFAULT;                          \
+    } else if (array.size == 0) {                \
+        errno = EINVAL;                          \
+    }                                            \
 
-extern int array_fill(const struct array* array_p, void* value);
+extern bool array_empty(struct array array);
 
 extern void array_swap(struct array* lhs_p, struct array* rhs_p);
 
