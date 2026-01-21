@@ -92,4 +92,23 @@ namespace array_testing {
         EXPECT_EQ(array_free(&array), EXIT_SUCCESS);
     }
 
+    /* ----------------------------------------------------array_back------------------------------------------------ */
+    TEST(array_back_suite, single_value_array) {
+        struct ::array array = {};
+        array_init(int, array, 1, 1);
+
+        EXPECT_EQ(array_back(int, array), 1);
+
+        EXPECT_EQ(array_free(&array), EXIT_SUCCESS);
+    }
+
+    TEST(array_back_suite, multi_value_array) {
+        struct ::array array = {};
+        array_init(int, array, 3, 1, 2, 3);
+
+        EXPECT_EQ(array_back(int, array), 3);
+
+        EXPECT_EQ(array_free(&array), EXIT_SUCCESS);
+    }
+
 } // namespace array_testing
