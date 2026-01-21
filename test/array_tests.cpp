@@ -60,4 +60,17 @@ namespace array_testing {
         EXPECT_EQ(::array_free(&array), EXIT_SUCCESS);
     }
 
+    /* -----------------------------------------------------array_at------------------------------------------------- */
+    TEST(array_at_suite, array_at_test) {
+        struct ::array array = {};
+        array_init(int, array, 3, 1, 2, 3);
+
+        for (std::size_t i = 0; i < array.size; i++) {
+            constexpr std::array matcher = {1, 2, 3};
+            EXPECT_EQ(array_at(int, array, i), matcher[i]);
+        }
+
+        EXPECT_EQ(array_free(&array), EXIT_SUCCESS);
+    }
+
 } // namespace array_testing
