@@ -152,4 +152,23 @@ namespace array_testing {
         EXPECT_EQ(::array_free(&array), EXIT_SUCCESS);
     }
 
+    /* ----------------------------------------------------array_empty----------------------------------------------- */
+    TEST(array_empty_suite, true_case) {
+        struct ::array array = {};
+        array_init(int, array, 0);
+
+        EXPECT_TRUE(array_empty(&array));
+
+        EXPECT_EQ(array_free(&array), EXIT_SUCCESS);
+    }
+
+    TEST(array_empty_suite, false_case) {
+        struct ::array array = {};
+        array_init(int, array, 3, 1, 2, 3);
+
+        EXPECT_FALSE(array_empty(&array));
+
+        EXPECT_EQ(array_free(&array), EXIT_SUCCESS);
+    }
+
 } // namespace array_testing
