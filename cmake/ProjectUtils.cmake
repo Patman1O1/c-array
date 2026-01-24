@@ -72,3 +72,34 @@ function(to_snake_case INPUT_STRING OUTPUT_STRING)
 
     set(${OUTPUT_STRING} "${temp}" PARENT_SCOPE)
 endfunction()
+
+#-----------------------------------------------------------------------------------------------------------------------
+# to_kebab_case()
+#-----------------------------------------------------------------------------------------------------------------------
+function(to_kebab_case INPUT_STRING OUTPUT_STRING)
+    # Replace common delimiters with underscores
+    string(REGEX REPLACE "[\\_\\. ]" "-" temp "${INPUT_STRING}")
+
+    # Insert underscore before uppercase letters in camelCase/PascalCase
+    # Match lowercase followed by uppercase: aB -> a-B
+    string(REGEX REPLACE "([a-z])([A-Z])" "\\1-\\2" temp "${temp}")
+
+    # Insert underscore between consecutive uppercase and lowercase (for acronyms)
+    # Match uppercase+uppercase followed by lowercase: ABc -> AB-c
+    string(REGEX REPLACE "([A-Z]+)([A-Z][a-z])" "\\1-\\2" temp "${temp}")
+
+    # Insert underscore between digit and letter
+    string(REGEX REPLACE "([0-9])([A-Za-z])" "\\1-\\2" temp "${temp}")
+    string(REGEX REPLACE "([A-Za-z])([0-9])" "\\1-\\2" temp "${temp}")
+
+    # Convert to lowercase
+    string(TOLOWER "${temp}" temp)
+
+    # Replace multiple consecutive underscores with single underscore
+    string(REGEX REPLACE "-+" "-" temp "${temp}")
+
+    # Remove leading/trailing underscores
+    string(REGEX REPLACE "^-|-$" "" temp "${temp}")
+
+    set(${OUTPUT_STRING} "${temp}" PARENT_SCOPE)
+endfunction()
