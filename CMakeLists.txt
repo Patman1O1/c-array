@@ -3,15 +3,15 @@
 #-----------------------------------------------------------------------------------------------------------------------
 # Project Information
 cmake_minimum_required(VERSION 3.28.0)
-project("c-array"
+project("array"
         VERSION 0.1.0
         DESCRIPTION ""
         LANGUAGES C
 )
-set(PROJECT_NAMESPACE c_array CACHE STRING "The namespace the project is in")
-set(PROJECT_OUTPUT_NAME c-array CACHE STRING "The base name that will be displayed on project output files")
-set(PROJECT_PACKAGE_NAME CArray CACHE STRING "The name that will be displayed on CMake package related files")
-set(PROJECT_PRIMARY_TARGET c_array)
+set(PROJECT_NAMESPACE array CACHE STRING "The namespace the project is in")
+set(PROJECT_OUTPUT_NAME array CACHE STRING "The base name that will be displayed on project output files")
+set(PROJECT_PACKAGE_NAME Array CACHE STRING "The name that will be displayed on CMake package related files")
+set(PROJECT_PRIMARY_TARGET array)
 
 # CMake Information
 cmake_file_api(
