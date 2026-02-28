@@ -1,2 +1,2 @@
-#include <c_array/c_array.h>
+#include <array/array.h>
 
