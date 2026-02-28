@@ -1,5 +1,5 @@
-#ifndef C_ARRAY_H
-#define C_ARRAY_H
+#ifndef ARRAY_H
+#define ARRAY_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -9,5 +9,5 @@ extern "C" {
 }
 #endif // #ifdef __cplusplus
 
-#endif // #ifndef C_ARRAY_H
+#endif // #ifndef ARRAY_H
 
