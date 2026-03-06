@@ -3,7 +3,40 @@
 
 #include "../../include/array/array.h"
 
-TEST(dummy_suite, dummy_test) {
-    EXPECT_TRUE(true);
-}
+namespace array_tests {
 
+    // ── Method Tests ─────────────────────────────────────────────────────────────────────────────────────────────────
+    TEST(array_init, empty_array) {
+        struct ::array array;
+        array_init(int, array, 0);
+
+        EXPECT_EQ(array.size, 0);
+        EXPECT_EQ(array.values_p, nullptr);
+    }
+
+    TEST(array_init, single_value_array) {
+        struct ::array array;
+        array_init(int, array, 1, 1);
+
+        EXPECT_EQ(array.size, 1);
+        EXPECT_NE(array.values_p, nullptr);
+
+        EXPECT_EQ(1, array_at(int, array, 0));
+    }
+
+    TEST(array_init, multi_value_array) {
+        struct ::array array;
+
+        array_init(int, array, 5, 1, 2, 3, 4, 5);
+
+        EXPECT_EQ(array.size, 5);
+        EXPECT_NE(array.values_p, nullptr);
+
+        EXPECT_EQ(1, array_at(int, array, 0));
+        EXPECT_EQ(2, array_at(int, array, 1));
+        EXPECT_EQ(3, array_at(int, array, 2));
+        EXPECT_EQ(4, array_at(int, array, 3));
+        EXPECT_EQ(5, array_at(int, array, 4));
+    }
+
+} // namespace array_tests
