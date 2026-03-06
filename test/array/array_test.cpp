@@ -87,4 +87,53 @@ namespace array_tests {
         EXPECT_EQ(1, array_back(int, array));
     }
 
+    // ── Method Tests (array_fill) ────────────────────────────────────────────────────────────────────────────────────
+    TEST(array_fill, empty_array) {
+        struct ::array array;
+        array_init(int, array, 0);
+
+        array_fill(int, array, 101);
+
+        EXPECT_EQ(array.size, 0);
+        EXPECT_EQ(array.values_p, nullptr);
+        EXPECT_EQ(errno, EFAULT);
+
+        // The pointer to the underlying array must be non-null in order
+        // to test the last if-else statement branch in array_fill
+        int* dummy_p = new int();
+        array.values_p = dummy_p;
+        array_fill(int, array, 101);
+        EXPECT_EQ(errno, EINVAL);
+        delete dummy_p;
+    }
+
+    TEST(array_fill, single_value_array) {
+        struct ::array array;
+        array_init(int, array, 1, 1);
+
+        array_fill(int, array, 101);
+
+        EXPECT_EQ(array.size, 1);
+        EXPECT_NE(array.values_p, nullptr);
+
+        EXPECT_EQ(101, array_at(int, array, 0));
+    }
+
+    TEST(array_fill, multi_value_array) {
+        struct ::array array;
+        array_init(int, array, 5, 1, 2, 3, 4, 5);
+
+        array_fill(int, array, 101);
+
+        EXPECT_EQ(array.size, 5);
+        EXPECT_NE(array.values_p, nullptr);
+
+        EXPECT_EQ(101, array_at(int, array, 0));
+        EXPECT_EQ(101, array_at(int, array, 1));
+        EXPECT_EQ(101, array_at(int, array, 2));
+        EXPECT_EQ(101, array_at(int, array, 3));
+        EXPECT_EQ(101, array_at(int, array, 4));
+    }
+
+
 } // namespace array_tests
