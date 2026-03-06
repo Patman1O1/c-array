@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 
 #include <array/array.h>
@@ -22,9 +23,9 @@ int array_swap(struct array* lhs_p, struct array* rhs_p) {
     }
 
     // Swap the arrays
-    void** temp = lhs_p->values;
-    lhs_p->values = rhs_p->values;
-    rhs_p->values = temp;
+    void* temp = lhs_p->values_p;
+    lhs_p->values_p = rhs_p->values_p;
+    rhs_p->values_p = temp;
 
     return EXIT_SUCCESS;
 }
@@ -40,7 +41,7 @@ int array_cpy(const struct array* src_p, const struct array* dst_p) {
         return EXIT_FAILURE;
     }
 
-    memcpy(dst_p->values, src_p->values, src_p->size);
+    memcpy(dst_p->values_p, src_p->values_p, src_p->size);
 
     return EXIT_SUCCESS;
 }
@@ -82,12 +83,12 @@ int array_free(struct array* array_p) {
         return EFAULT;
     }
 
-    if (array_p->values == NULL) {
+    if (array_p->values_p == NULL) {
         return EXIT_SUCCESS;
     }
 
-    free(array_p->values);
-    array_p->values = NULL;
+    free(array_p->values_p);
+    array_p->values_p = NULL;
 
     return EXIT_SUCCESS;
 }
