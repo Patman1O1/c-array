@@ -4,7 +4,6 @@
 #include "../../include/array/array.h"
 
 namespace array_tests {
-
     // ── Method Tests (array_init) ────────────────────────────────────────────────────────────────────────────────────
     TEST(array_init, empty_array) {
         struct ::array array;
@@ -12,6 +11,8 @@ namespace array_tests {
 
         EXPECT_EQ(array.size, 0);
         EXPECT_EQ(array.values_p, nullptr);
+
+        array_free(&array);
     }
 
     TEST(array_init, single_value_array) {
@@ -135,5 +136,32 @@ namespace array_tests {
         EXPECT_EQ(101, array_at(int, array, 4));
     }
 
+    // ── Method Tests (array_empty) ───────────────────────────────────────────────────────────────────────────────────
+    TEST(array_empty, empty_array) {
+        struct ::array array;
+        array_init(int, array, 0);
+
+        EXPECT_EQ(array.size, 0);
+        EXPECT_EQ(array.values_p, nullptr);
+        EXPECT_TRUE(array_empty(&array));
+    }
+
+    TEST(array_empty, single_value_array) {
+        struct ::array array;
+        array_init(int, array, 1, 1);
+
+        EXPECT_NE(array.size, 0);
+        EXPECT_NE(array.values_p, nullptr);
+        EXPECT_FALSE(array_empty(&array));
+    }
+
+    TEST(array_empty, multi_value_array) {
+        struct ::array array;
+        array_init(int, array, 5, 1, 2, 3, 4, 5);
+
+        EXPECT_EQ(array.size, 5);
+        EXPECT_NE(array.values_p, nullptr);
+        EXPECT_FALSE(array_empty(&array));
+    }
 
 } // namespace array_tests
