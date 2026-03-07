@@ -205,7 +205,6 @@ namespace array_tests {
         array_fill(int, array, 101);
         EXPECT_EQ(errno, EINVAL);
         delete dummy_p;
-        array_free(&array);
     }
 
     TEST(array_fill, single_value_array) {
@@ -307,6 +306,72 @@ namespace array_tests {
 
         EXPECT_EQ(0, lhs.size);
         EXPECT_EQ(0, rhs.size);
+    }
+
+    TEST(array_swap, lhs_filled__rhs_empty) {
+        struct ::array lhs, rhs;
+
+        struct ::array matcher;
+        array_init(int, matcher, 5, 1, 2, 3, 4, 5);
+
+        array_init(int, lhs, 5, 1, 2, 3, 4, 5);
+        array_init(int, rhs, 0);
+
+        EXPECT_EQ(EXIT_SUCCESS, array_swap(&lhs, &rhs));
+        EXPECT_TRUE(array_empty(&lhs));
+
+        EXPECT_EQ(0, array_cmp(&rhs, &matcher));
+        EXPECT_FALSE(array_empty(&rhs));
+
+        array_free(&lhs);
+        array_free(&rhs);
+        array_free(&matcher);
+    }
+
+    TEST(array_swap, lhs_empty__rhs_filled) {
+        struct ::array lhs, rhs;
+
+        struct ::array matcher;
+        array_init(int, matcher, 5, 1, 2, 3, 4, 5);
+
+        array_init(int, lhs, 0);
+        array_init(int, rhs, 5, 1, 2, 3, 4, 5);
+
+        EXPECT_EQ(EXIT_SUCCESS, array_swap(&lhs, &rhs));
+        EXPECT_TRUE(array_empty(&rhs));
+
+        EXPECT_EQ(0, array_cmp(&lhs, &matcher));
+        EXPECT_FALSE(array_empty(&lhs));
+
+        array_free(&lhs);
+        array_free(&rhs);
+        array_free(&matcher);
+    }
+
+    TEST(array_swap, both_filled) {
+        struct ::array lhs, rhs;
+
+        struct ::array lhs_matcher, rhs_matcher;
+
+        array_init(int, lhs, 5, 1, 2, 3, 4, 5);
+        array_init(int, rhs, 5, 6, 7, 8, 9, 10);
+
+        array_init(int, lhs_matcher, 5, 6, 7, 8, 9, 10);
+        array_init(int, rhs_matcher, 5, 1, 2, 3, 4, 5);
+
+        EXPECT_EQ(EXIT_SUCCESS, array_swap(&lhs, &rhs));
+
+        EXPECT_FALSE(array_empty(&lhs));
+        EXPECT_FALSE(array_empty(&rhs));
+
+        EXPECT_EQ(0, array_cmp(&lhs, &lhs_matcher));
+        EXPECT_EQ(0, array_cmp(&rhs, &rhs_matcher));
+
+        array_free(&lhs);
+        array_free(&rhs);
+
+        array_free(&lhs_matcher);
+        array_free(&rhs_matcher);
     }
 
 } // namespace array_tests
