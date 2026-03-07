@@ -2,6 +2,7 @@
 #define ARRAY_H
 
 #include <stddef.h>
+#include <assert.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -18,7 +19,7 @@ extern "C" {
         type __values[] = {__VA_ARGS__};                                     \
         const size_t __values_size = sizeof(__values) / sizeof(__values[0]); \
         if (__values_size <= array.size && __values_size > 0) {              \
-            memcpy(array.values_p, __values, sizeof(type) * array.size);     \
+            memcpy(array.values_p, __values, sizeof(type) * __values_size);  \
         } else {                                                             \
             free(array.values_p);                                            \
             errno = E2BIG;                                                   \
@@ -28,11 +29,20 @@ extern "C" {
         array.values_p = NULL;                                               \
     }                                                                        \
 
-#define array_at(type, array, index) (((type*)array.values_p)[index])
+#define array_at(type, array, index) \
+    (assert(array.values_p != NULL), \
+     assert(index < array.size),     \
+    ((type*)array.values_p)[index])  \
 
-#define array_front(type, array) (((type*)array.values_p)[0])
+#define array_front(type, array)     \
+    (assert(array.values_p != NULL), \
+     assert(array.size > 0),         \
+    ((type*)array.values_p)[0])      \
 
-#define array_back(type, array) (((type*)array.values_p)[array.size - 1])
+#define array_back(type, array)              \
+    (assert(array.values_p != NULL),         \
+     assert(array.size > 0),                 \
+    ((type*)array.values_p)[array.size - 1]) \
 
 #define array_fill(type, array, value)              \
     if (array.values_p != NULL && array.size > 0) { \
@@ -49,6 +59,8 @@ struct array {
     void* values_p;
     size_t size;
 };
+
+extern int array_cmp(const struct array* lhs_p, const struct array* rhs_p);
 
 extern bool array_empty(const struct array* array_p);
 
