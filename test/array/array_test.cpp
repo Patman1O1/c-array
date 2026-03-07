@@ -88,6 +88,88 @@ namespace array_tests {
         EXPECT_EQ(1, array_back(int, array));
     }
 
+    // ── Method Tests (array_cmp) ─────────────────────────────────────────────────────────────────────────────────────
+    TEST(array_cmp, lhs_null) {
+        struct ::array rhs;
+        array_init(int, rhs, 0);
+
+        EXPECT_EQ(EFAULT, array_cmp(nullptr, &rhs));
+        EXPECT_EQ(EFAULT, errno);
+    }
+
+    TEST(array_cmp, rhs_null) {
+        struct ::array lhs;
+        array_init(int, lhs, 0);
+
+        EXPECT_EQ(EFAULT, array_cmp(&lhs, nullptr));
+        EXPECT_EQ(EFAULT, errno);
+    }
+
+    TEST(array_cmp, lhs_empty__rhs_filled) {
+        struct ::array lhs, rhs;
+
+        array_init(int, lhs, 0);
+        array_init(int, rhs, 5, 1, 2, 3, 4, 5);
+
+        EXPECT_EQ(-1, array_cmp(&lhs, &rhs));
+
+        array_free(&rhs);
+    }
+
+    TEST(array_cmp, lhs_filled__rhs_empty) {
+        struct ::array lhs, rhs;
+
+        array_init(int, lhs, 5, 1, 2, 3, 4, 5);
+        array_init(int, rhs, 0);
+
+        EXPECT_EQ(1, array_cmp(&lhs, &rhs));
+    }
+
+    TEST(array_cmp, both_filled__lhs_size_larger) {
+        struct ::array lhs, rhs;
+
+        array_init(int, lhs, 5, 1, 2, 3, 4, 5);
+        array_init(int, rhs, 1, 6);
+
+        EXPECT_EQ(1, array_cmp(&lhs, &rhs));
+    }
+
+    TEST(array_cmp, both_filled__rhs_size_larger) {
+        struct ::array lhs, rhs;
+
+        array_init(int, lhs, 1, 1);
+        array_init(int, rhs, 5, 1, 2, 3, 4, 5);
+
+        EXPECT_EQ(-1, array_cmp(&lhs, &rhs));
+    }
+
+    TEST(array_cmp, both_filled__both_sizes_equal__lhs_values_greater) {
+        struct ::array lhs, rhs;
+
+        array_init(int, lhs, 5, 6, 7, 8, 9, 10);
+        array_init(int, rhs, 5, 1, 2, 3, 4, 5);
+
+        EXPECT_EQ(1, array_cmp(&lhs, &rhs));
+    }
+
+    TEST(array_cmp, both_filled__both_sizes_equal__rhs_values_greater) {
+        struct ::array lhs, rhs;
+
+        array_init(int, lhs, 5, 1, 2, 3, 4, 5);
+        array_init(int, rhs, 5, 6, 7, 8, 9, 10);
+
+        EXPECT_EQ(-1, array_cmp(&lhs, &rhs));
+    }
+
+    TEST(array_cmp, both_filled__both_sizes_equal__both_values_equal) {
+        struct ::array lhs, rhs;
+
+        array_init(int, lhs, 5, 1, 2, 3, 4, 5);
+        array_init(int, rhs, 5, 1, 2, 3, 4, 5);
+
+        EXPECT_EQ(0, array_cmp(&lhs, &rhs));
+    }
+
     // ── Method Tests (array_fill) ────────────────────────────────────────────────────────────────────────────────────
     TEST(array_fill, empty_array) {
         struct ::array array;
@@ -162,6 +244,43 @@ namespace array_tests {
         EXPECT_EQ(array.size, 5);
         EXPECT_NE(array.values_p, nullptr);
         EXPECT_FALSE(array_empty(&array));
+    }
+
+    // ── Method Tests (array_swap) ────────────────────────────────────────────────────────────────────────────────────
+    TEST(array_swap, lhs_null) {
+        struct ::array rhs;
+        array_init(int, rhs, 0);
+
+        EXPECT_EQ(-1, array_swap(nullptr, &rhs));
+        EXPECT_EQ(errno, EFAULT);
+    }
+
+    TEST(array_swap, rhs_null) {
+        struct ::array lhs;
+        array_init(int, lhs, 0);
+
+        EXPECT_EQ(-1, array_swap(&lhs, nullptr));
+        EXPECT_EQ(errno, EFAULT);
+    }
+
+    TEST(array_swap, both_null) {
+        EXPECT_EQ(-1, array_swap(nullptr, nullptr));
+        EXPECT_EQ(errno, EFAULT);
+    }
+
+    TEST(array_swap, both_empty) {
+        struct ::array lhs, rhs;
+
+        array_init(int, lhs, 0);
+        array_init(int, rhs, 0);
+
+        EXPECT_EQ(EXIT_SUCCESS, array_swap(&lhs, &rhs));
+
+        EXPECT_EQ(nullptr, lhs.values_p);
+        EXPECT_EQ(nullptr, rhs.values_p);
+
+        EXPECT_EQ(0, lhs.size);
+        EXPECT_EQ(0, rhs.size);
     }
 
 } // namespace array_tests
