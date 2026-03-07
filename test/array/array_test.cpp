@@ -123,6 +123,8 @@ namespace array_tests {
         array_init(int, rhs, 0);
 
         EXPECT_EQ(1, array_cmp(&lhs, &rhs));
+
+        array_free(&lhs);
     }
 
     TEST(array_cmp, both_filled__lhs_size_larger) {
@@ -132,6 +134,9 @@ namespace array_tests {
         array_init(int, rhs, 1, 6);
 
         EXPECT_EQ(1, array_cmp(&lhs, &rhs));
+
+        array_free(&lhs);
+        array_free(&rhs);
     }
 
     TEST(array_cmp, both_filled__rhs_size_larger) {
@@ -141,6 +146,9 @@ namespace array_tests {
         array_init(int, rhs, 5, 1, 2, 3, 4, 5);
 
         EXPECT_EQ(-1, array_cmp(&lhs, &rhs));
+
+        array_free(&lhs);
+        array_free(&rhs);
     }
 
     TEST(array_cmp, both_filled__both_sizes_equal__lhs_values_greater) {
@@ -150,6 +158,9 @@ namespace array_tests {
         array_init(int, rhs, 5, 1, 2, 3, 4, 5);
 
         EXPECT_EQ(1, array_cmp(&lhs, &rhs));
+
+        array_free(&lhs);
+        array_free(&rhs);
     }
 
     TEST(array_cmp, both_filled__both_sizes_equal__rhs_values_greater) {
@@ -159,6 +170,9 @@ namespace array_tests {
         array_init(int, rhs, 5, 6, 7, 8, 9, 10);
 
         EXPECT_EQ(-1, array_cmp(&lhs, &rhs));
+
+        array_free(&lhs);
+        array_free(&rhs);
     }
 
     TEST(array_cmp, both_filled__both_sizes_equal__both_values_equal) {
@@ -168,6 +182,9 @@ namespace array_tests {
         array_init(int, rhs, 5, 1, 2, 3, 4, 5);
 
         EXPECT_EQ(0, array_cmp(&lhs, &rhs));
+
+        array_free(&lhs);
+        array_free(&rhs);
     }
 
     // ── Method Tests (array_fill) ────────────────────────────────────────────────────────────────────────────────────
@@ -188,6 +205,7 @@ namespace array_tests {
         array_fill(int, array, 101);
         EXPECT_EQ(errno, EINVAL);
         delete dummy_p;
+        array_free(&array);
     }
 
     TEST(array_fill, single_value_array) {
@@ -200,6 +218,8 @@ namespace array_tests {
         EXPECT_NE(array.values_p, nullptr);
 
         EXPECT_EQ(101, array_at(int, array, 0));
+
+        array_free(&array);
     }
 
     TEST(array_fill, multi_value_array) {
@@ -216,6 +236,8 @@ namespace array_tests {
         EXPECT_EQ(101, array_at(int, array, 2));
         EXPECT_EQ(101, array_at(int, array, 3));
         EXPECT_EQ(101, array_at(int, array, 4));
+
+        array_free(&array);
     }
 
     // ── Method Tests (array_empty) ───────────────────────────────────────────────────────────────────────────────────
@@ -235,6 +257,8 @@ namespace array_tests {
         EXPECT_NE(array.size, 0);
         EXPECT_NE(array.values_p, nullptr);
         EXPECT_FALSE(array_empty(&array));
+
+        array_free(&array);
     }
 
     TEST(array_empty, multi_value_array) {
@@ -244,6 +268,8 @@ namespace array_tests {
         EXPECT_EQ(array.size, 5);
         EXPECT_NE(array.values_p, nullptr);
         EXPECT_FALSE(array_empty(&array));
+
+        array_free(&array);
     }
 
     // ── Method Tests (array_swap) ────────────────────────────────────────────────────────────────────────────────────
