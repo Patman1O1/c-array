@@ -8,13 +8,30 @@
 extern "C" {
 #endif // ifdef __cplusplus
 
+int array_cmp(const struct array* lhs_p, const struct array* rhs_p) {
+    if (lhs_p == NULL || rhs_p == NULL) {
+        errno = EFAULT;
+        return errno;
+    }
+
+    if (lhs_p->size > rhs_p->size) {
+        return 1;
+    }
+
+    if (lhs_p->size < rhs_p->size) {
+        return -1;
+    }
+
+    return memcmp(lhs_p->values_p, rhs_p->values_p, lhs_p->size);
+}
+
 bool array_empty(const struct array* array_p) { return array_p->size == 0; }
 
 int array_swap(struct array* lhs_p, struct array* rhs_p) {
     // Make sure each pointer points to an array instance
     if (lhs_p == NULL || rhs_p == NULL) {
         errno = EFAULT;
-        return errno;
+        return -1;
     }
 
     // Do nothing if both of the arrays are the same
