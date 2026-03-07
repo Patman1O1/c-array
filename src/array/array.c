@@ -25,7 +25,7 @@ int array_cmp(const struct array* lhs_p, const struct array* rhs_p) {
     return memcmp(lhs_p->values_p, rhs_p->values_p, lhs_p->size);
 }
 
-bool array_empty(const struct array* array_p) { return array_p->size == 0; }
+bool array_empty(const struct array* array_p) { return array_p->values_p == NULL && array_p->size == 0; }
 
 int array_swap(struct array* lhs_p, struct array* rhs_p) {
     // Make sure each pointer points to an array instance
@@ -40,9 +40,14 @@ int array_swap(struct array* lhs_p, struct array* rhs_p) {
     }
 
     // Swap the arrays
-    void* temp = lhs_p->values_p;
+    void* temp_values_p = lhs_p->values_p;
+    const size_t temp_size = lhs_p->size;
+
     lhs_p->values_p = rhs_p->values_p;
-    rhs_p->values_p = temp;
+    lhs_p->size = rhs_p->size;
+
+    rhs_p->values_p = temp_values_p;
+    rhs_p->size = temp_size;
 
     return EXIT_SUCCESS;
 }
