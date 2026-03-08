@@ -2,10 +2,10 @@ from conan import ConanFile
 from conan.tools.cmake import CMake, CMakeToolchain, CMakeDeps, cmake_layout
 from conan.tools.build import check_min_cppstd
 
-class CArrayFile(ConanFile):
-    name = "c_array"
+class ArrayFile(ConanFile):
+    name = "array"
     version = "0.1.0"
-    label = ""
+    description = "An implementation of an array written in C."
 
     settings = ("os", "arch", "compiler", "build_type")
 
@@ -20,6 +20,9 @@ class CArrayFile(ConanFile):
         "build_shared_libs": True,
         "build_tests": False
     }
+
+    def source(self) -> None:
+        self.run("git clone http://github.com/Patman1O1/c-array.git")
 
     def build_requirements(self) -> None:
         self.tool_requires("cmake/[>=3.28.0]")
