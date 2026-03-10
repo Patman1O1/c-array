@@ -374,4 +374,69 @@ namespace array_tests {
         array_free(&rhs_matcher);
     }
 
+    // ── Method Tests (array_cpy) ─────────────────────────────────────────────────────────────────────────────────────
+    TEST(array_cpy, src_null) {
+        struct ::array dst;
+        array_init(int, dst, 5, 1, 2, 3, 4, 5);
+
+        EXPECT_EQ(-1, array_cpy(nullptr, &dst));
+        EXPECT_EQ(errno, EFAULT);
+
+        array_free(&dst);
+    }
+
+    TEST(array_cpy, dst_null) {
+        struct ::array src;
+        array_init(int, src, 5, 1, 2, 3, 4, 5);
+
+        EXPECT_EQ(-1, array_cpy(&src, nullptr));
+        EXPECT_EQ(errno, EFAULT);
+
+        array_free(&src);
+    }
+
+    TEST(array_cpy, both_empty) {
+        struct ::array src, dst;
+
+        array_init(int, src, 0);
+        array_init(int, dst, 0);
+
+        EXPECT_EQ(EXIT_SUCCESS, array_cpy(&src, &dst));
+
+        EXPECT_TRUE(array_empty(&src));
+        EXPECT_TRUE(array_empty(&dst));
+    }
+
+    TEST(array_cpy, different_sizes) {
+        struct ::array src, dst;
+        struct ::array matcher;
+
+        array_init(int, src, 0);
+        array_init(int, dst, 5, 1, 2, 3, 4, 5);
+
+        array_init(int, matcher, 5, 1, 2, 3, 4, 5);
+
+        EXPECT_EQ(-1, array_cpy(&src, &dst));
+        EXPECT_EQ(errno, EINVAL);
+
+        EXPECT_TRUE(array_empty(&src));
+        EXPECT_EQ(0, array_cmp(&dst, &matcher));
+
+        array_free(&dst);
+    }
+
+    TEST(array_cpy, same_sizes) {
+        struct ::array src, dst;
+
+        array_init(int, src, 5, 1, 2, 3, 4, 5);
+        array_init(int, dst, 5, 6, 7, 8, 9, 10);
+
+        EXPECT_EQ(EXIT_SUCCESS, array_cpy(&src, &dst));
+
+        EXPECT_EQ(0, array_cmp(&dst, &src));
+    }
+
+    // ── Method Tests (array_mv) ──────────────────────────────────────────────────────────────────────────────────────
+
+
 } // namespace array_tests
